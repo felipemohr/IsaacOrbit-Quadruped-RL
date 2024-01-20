@@ -1,0 +1,24 @@
+[package]
+# Semantic Versioning is used: https://semver.org/
+version = "0.1.0"
+
+# Description
+title = "omni isaac orbit quadruped_rl"
+description = "Extension containing environments for quadruped robot learning."
+authors = ["Felipe Mohr"]
+readme = "docs/README.md"
+changelog = "docs/CHANGELOG.md"
+repository = "https://github.com/felipemohr/IsaacOrbit-Quadruped-RL"
+category = "robotics"
+keywords = ["robotics", "quadruped", "rl"]
+
+[dependencies]
+"omni.isaac.orbit" = {}
+"omni.isaac.orbit_assets" = {}
+"omni.isaac.orbit_tasks" = {}
+"omni.isaac.core" = {}
+"omni.isaac.gym" = {}
+"omni.replicator.isaac" = {}
+
+[[python.module]]
+name = "omni.isaac.orbit_quadruped_rl"
