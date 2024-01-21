@@ -11,8 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added new mdp `feet_contact_bools` observation function  
-- Added new mdp `joint_powers_l2` reward function
+- Added new mdp `feet_contact_bools` observation function.
+- Added new mdp `joint_powers_l2` reward function.
+- Added logs with trained models in 2nd version of the environment.
 
 ### Changed
 
