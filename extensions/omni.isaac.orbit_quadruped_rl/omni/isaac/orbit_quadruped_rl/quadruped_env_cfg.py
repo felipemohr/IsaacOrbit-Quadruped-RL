@@ -14,8 +14,7 @@ from omni.isaac.orbit.utils.noise import AdditiveGaussianNoiseCfg as GaussianNoi
 from omni.isaac.orbit.envs import RLTaskEnvCfg
 from omni.isaac.orbit.utils import configclass
 
-# from omni.isaac.orbit.envs import mdp
-from omni.isaac.orbit_tasks.locomotion.velocity import mdp
+from omni.isaac.orbit_quadruped_rl import mdp
 
 from omni.isaac.orbit_assets.unitree import UNITREE_GO2_CFG
 
@@ -99,7 +98,11 @@ class ObservationsCfg:
         joint_pos = ObsTerm(func=mdp.joint_pos_rel, noise=GaussianNoise(mean=0.0, std=0.01))
         joint_vel = ObsTerm(func=mdp.joint_vel_rel, noise=GaussianNoise(mean=0.0, std=0.5))
 
-        # TODO: Feet contact booleans
+        # Feet contact booleans
+        feet_contact = ObsTerm(
+            func=mdp.feet_contact_bools,
+            params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"), "threshold": 5.0},
+        )
 
         # Last action
         last_action = ObsTerm(func=mdp.last_action)
@@ -116,12 +119,14 @@ class ObservationsCfg:
 class RandomizationCfg:
     """Configuration for randomization."""
 
+    # startup
     add_base_mass = RandTerm(
         func=mdp.add_body_mass,
         mode="startup",
         params={"asset_cfg": SceneEntityCfg("robot", body_names="base"), "mass_range": (-1.0, 2.0)},
     )
 
+    # reset
     reset_robot_base = RandTerm(
         func=mdp.reset_root_state_uniform,
         mode="reset",
@@ -146,17 +151,6 @@ class RandomizationCfg:
             "velocity_range": (0.0, 0.0),
         },
     )
-
-    # reset
-    # base_external_force_torque = RandTerm(
-    #     func=mdp.apply_external_force_torque,
-    #     mode="reset",
-    #     params={
-    #         "asset_cfg": SceneEntityCfg("robot", body_names="base"),
-    #         "force_range": (0.0, 0.0),
-    #         "torque_range": (-0.0, 0.0),
-    #     },
-    # )
 
     # interval
     push_robot = RandTerm(
@@ -190,9 +184,8 @@ class RewardsCfg:
     pen_lin_vel_z = RewTerm(func=mdp.lin_vel_z_l2, weight=-1.0)
     pen_ang_vel_xy = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
     pen_action_rate = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
-    dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-6)
-    dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-1.0e-6)
-    # pen_orientation = RewTerm(func=mdp.flat_orientation_l2, weight=-0.01)
+    pen_joint_accel = RewTerm(func=mdp.joint_acc_l2, weight=-1.0e-6)
+    pen_joint_powers = RewTerm(func=mdp.joint_powers_l2, weight=-1e-3)
 
 
 @configclass
