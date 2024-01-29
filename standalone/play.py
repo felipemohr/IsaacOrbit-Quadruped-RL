@@ -95,7 +95,7 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
             # Get observations
             # TODO: Read command from keyboard
             # TODO: Markers
-            vel_command = torch.Tensor([[1.0, 0.0, 0.0]]).to(sim.device)
+            vel_command = torch.stack([torch.Tensor([1.0, 0.0, 0.0])] * args_cli.num_envs).to(sim.device)
 
             # TODO: add noise
             base_lin_vel = robot.data.root_lin_vel_b
