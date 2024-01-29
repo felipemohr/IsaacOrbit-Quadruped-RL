@@ -1,16 +1,16 @@
 [package]
 # Semantic Versioning is used: https://semver.org/
-version = "0.2.0"
+version = "0.1.0"
 
 # Description
-title = "omni isaac orbit quadruped_rl"
-description = "Extension containing environments for quadruped robot learning."
+title = "omni isaac orbit quadruped_cpg"
+description = "Extension containing CPG and IK algorithms for quadruped locomotion."
 authors = ["Felipe Mohr"]
 readme = "docs/README.md"
 changelog = "docs/CHANGELOG.md"
 repository = "https://github.com/felipemohr/IsaacOrbit-Quadruped-RL"
 category = "robotics"
-keywords = ["robotics", "quadruped", "rl"]
+keywords = ["robotics", "quadruped", "cpg"]
 
 [dependencies]
 "omni.isaac.orbit" = {}
@@ -21,4 +21,4 @@ keywords = ["robotics", "quadruped", "rl"]
 "omni.replicator.isaac" = {}
 
 [[python.module]]
-name = "omni.isaac.orbit_quadruped_rl"
+name = "omni.isaac.orbit_quadruped_cpg"
