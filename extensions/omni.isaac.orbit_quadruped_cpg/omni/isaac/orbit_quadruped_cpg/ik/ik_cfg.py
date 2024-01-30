@@ -17,4 +17,4 @@ class QuadrupedIKCfg:
     """Third segment of the quadruped's lef, the length of the calf."""
 
 
-GO2_IK_CFG = QuadrupedIKCfg(hip_length=0.1, thigh_length=0.2, calf_length=0.2)
+GO2_IK_CFG = QuadrupedIKCfg(hip_length=0.0955, thigh_length=0.213, calf_length=0.213)

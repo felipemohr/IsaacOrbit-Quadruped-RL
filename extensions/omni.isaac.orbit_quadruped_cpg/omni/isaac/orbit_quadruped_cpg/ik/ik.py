@@ -32,4 +32,29 @@ class QuadrupedIK:
         theta2 = np.pi / 2 - np.arctan2(a, x) - np.arctan2(np.sqrt(1.0 - A**2), A)
         theta3 = np.arctan2(np.sqrt(1.0 - B**2), B)
 
-        return np.array([theta1, -theta2, -theta3])
+        return np.array([theta1, -theta2, -theta3]).transpose()
+
+    def get_all_leg_joints(self, fl_point, fr_point, rl_point, rr_point) -> np.ndarray:
+        """Get the joints of all quadruped's leg from the desired (x,y,z) points for the feet w.r.t the hip frame of each leg."""
+
+        fl_joints = self.get_leg_joints(fl_point, left=True)
+        fr_joints = self.get_leg_joints(fr_point, left=False)
+        rl_joints = self.get_leg_joints(rl_point, left=True)
+        rr_joints = self.get_leg_joints(rr_point, left=False)
+
+        return np.array(
+            [
+                fl_joints[:, 0],
+                fr_joints[:, 0],
+                rl_joints[:, 0],
+                rr_joints[:, 0],
+                fl_joints[:, 1],
+                fr_joints[:, 1],
+                rl_joints[:, 1],
+                rr_joints[:, 1],
+                fl_joints[:, 2],
+                fr_joints[:, 2],
+                rl_joints[:, 2],
+                rr_joints[:, 2],
+            ]
+        ).transpose()
