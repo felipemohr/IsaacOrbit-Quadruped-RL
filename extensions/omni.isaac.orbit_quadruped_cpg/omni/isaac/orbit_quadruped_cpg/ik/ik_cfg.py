@@ -18,3 +18,4 @@ class QuadrupedIKCfg:
 
 
 GO2_IK_CFG = QuadrupedIKCfg(hip_length=0.0955, thigh_length=0.213, calf_length=0.213)
+"""Configuration of Unitree Go2 dimensions used by Inverse Kinematics."""
