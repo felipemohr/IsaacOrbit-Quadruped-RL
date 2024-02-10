@@ -102,15 +102,16 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
             # Get observations
             # TODO: Read command from keyboard
             # TODO: Markers
-            vel_command = torch.stack([torch.Tensor([0.8, 0.0, 0.0])] * args_cli.num_envs).to(sim.device)
+            vel_command = torch.stack([torch.Tensor([1.0, 0.0, 0.0])] * args_cli.num_envs).to(sim.device)
 
-            # TODO: add noise
-            base_lin_vel = robot.data.root_lin_vel_b
-            base_ang_vel = robot.data.root_ang_vel_b
-            proj_gravity = robot.data.projected_gravity_b
+            base_lin_vel = robot.data.root_lin_vel_b + 0.05 * torch.randn_like(robot.data.root_lin_vel_b)
+            base_ang_vel = robot.data.root_ang_vel_b + 0.05 * torch.randn_like(robot.data.root_ang_vel_b)
+            proj_gravity = robot.data.projected_gravity_b + 0.025 * torch.randn_like(robot.data.projected_gravity_b)
 
             joint_pos = robot.data.joint_pos - robot.data.default_joint_pos
+            joint_pos += 0.01 * torch.randn_like(robot.data.joint_pos)
             joint_vel = robot.data.joint_vel - robot.data.default_joint_vel
+            joint_vel += 0.5 * torch.randn_like(robot.data.joint_vel)
 
             feet_net_forces = scene.sensors[feet_sensor_cfg.name].data.net_forces_w
             feet_contact = torch.norm(feet_net_forces[:, feet_sensor_cfg.body_ids], dim=-1) > feet_contact_threshold
