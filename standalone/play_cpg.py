@@ -37,11 +37,12 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, cpg: Quadrupe
     robot.actuators["base_legs"].stiffness = 100.0
     robot.actuators["base_legs"].damping = 1.0
 
-    simulation_data = QuadrupedSimulationData()
-
     with torch.inference_mode():
         while simulation_app.is_running():
             if sim_time >= 30.0 or render_count == 0:
+                if args_cli.save_data_dir is not None and render_count > 0:
+                    simulation_data.saveToFile(args_cli.save_data_dir)
+                simulation_data = QuadrupedSimulationData()
                 sim_time = 0.0
 
                 root_state = robot.data.default_root_state.clone()
@@ -75,9 +76,6 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, cpg: Quadrupe
             render_count += 1
 
             simulation_data.saveStep(robot.data, sim_time=sim_time)
-
-    if args_cli.save_data_dir is not None:
-        simulation_data.saveToFile(args_cli.save_data_dir)
 
 
 def main():

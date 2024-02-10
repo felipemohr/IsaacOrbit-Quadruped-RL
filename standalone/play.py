@@ -77,11 +77,13 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
     feet_sensor_cfg = SceneEntityCfg("contact_forces", body_names=".*_foot")
     feet_sensor_cfg.resolve(scene)
 
-    simulation_data = QuadrupedSimulationData()
-
     with torch.inference_mode():
         while simulation_app.is_running():
             if sim_time >= 30.0 or render_count == 0:
+                if args_cli.save_data_dir is not None and render_count > 0:
+                    simulation_data.saveToFile(args_cli.save_data_dir)
+                simulation_data = QuadrupedSimulationData()
+
                 sim_time = 0.0
 
                 root_state = robot.data.default_root_state.clone()
@@ -100,7 +102,7 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
             # Get observations
             # TODO: Read command from keyboard
             # TODO: Markers
-            vel_command = torch.stack([torch.Tensor([1.0, 0.0, 0.0])] * args_cli.num_envs).to(sim.device)
+            vel_command = torch.stack([torch.Tensor([0.8, 0.0, 0.0])] * args_cli.num_envs).to(sim.device)
 
             # TODO: add noise
             base_lin_vel = robot.data.root_lin_vel_b
@@ -143,9 +145,6 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
             render_count += 1
 
             simulation_data.saveStep(robot.data, sim_time=sim_time)
-
-    if args_cli.save_data_dir is not None:
-        simulation_data.saveToFile(args_cli.save_data_dir)
 
 
 def main():

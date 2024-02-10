@@ -1,36 +1,43 @@
 import os
 import pickle
+import torch
 from datetime import datetime
 
-from omni.isaac.orbit.assets import ArticulationData
+# from omni.isaac.orbit.assets import ArticulationData
 
 
 class QuadrupedSimulationData:
     """Class to store the simulation data from the quadruped robot."""
 
-    def __init__(self):
+    def __init__(self, device="cuda:0"):
         """Initialize the robot articulation data buffer attributes."""
 
-        self.base_lin_vel_buffer = list()
-        self.base_ang_vel_buffer = list()
-        self.projected_gravity_buffer = list()
-        self.joint_pos_buffer = list()
-        self.joint_vel_buffer = list()
-        self.joint_acc_buffer = list()
-        self.joint_torques_buffer = list()
-        self.sim_time_buffer = list()
+        self.base_lin_vel_buffer = torch.empty(0).to(device)
+        self.base_ang_vel_buffer = torch.empty(0).to(device)
+        self.projected_gravity_buffer = torch.empty(0).to(device)
+        self.joint_pos_buffer = torch.empty(0).to(device)
+        self.joint_vel_buffer = torch.empty(0).to(device)
+        self.joint_acc_buffer = torch.empty(0).to(device)
+        self.joint_torques_buffer = torch.empty(0).to(device)
+        self.sim_time_buffer = torch.empty(0)
 
-    def saveStep(self, articulation_data: ArticulationData, sim_time: float = 0.0):
+    def saveStep(self, articulation_data, sim_time: float = 0.0):
         """Saves the current simulation data in the class attributes."""
 
-        self.base_lin_vel_buffer.append(articulation_data.root_lin_vel_b.clone())
-        self.base_ang_vel_buffer.append(articulation_data.root_ang_vel_b.clone())
-        self.projected_gravity_buffer.append(articulation_data.projected_gravity_b.clone())
-        self.joint_pos_buffer.append(articulation_data.joint_pos.clone() - articulation_data.default_joint_pos.clone())
-        self.joint_vel_buffer.append(articulation_data.joint_vel.clone() - articulation_data.default_joint_vel.clone())
-        self.joint_acc_buffer.append(articulation_data.joint_acc.clone())
-        self.joint_torques_buffer.append(articulation_data.applied_torque.clone())
-        self.sim_time_buffer.append(sim_time)
+        self.base_lin_vel_buffer = torch.cat((self.base_lin_vel_buffer, articulation_data.root_lin_vel_b.clone()))
+        self.base_ang_vel_buffer = torch.cat((self.base_ang_vel_buffer, articulation_data.root_ang_vel_b.clone()))
+        self.projected_gravity_buffer = torch.cat(
+            (self.projected_gravity_buffer, articulation_data.projected_gravity_b.clone())
+        )
+        self.joint_pos_buffer = torch.cat(
+            (self.joint_pos_buffer, articulation_data.joint_pos.clone() - articulation_data.default_joint_pos.clone())
+        )
+        self.joint_vel_buffer = torch.cat(
+            (self.joint_vel_buffer, articulation_data.joint_vel.clone() - articulation_data.default_joint_vel.clone())
+        )
+        self.joint_acc_buffer = torch.cat((self.joint_acc_buffer, articulation_data.joint_acc.clone()))
+        self.joint_torques_buffer = torch.cat((self.joint_torques_buffer, articulation_data.applied_torque.clone()))
+        self.sim_time_buffer = torch.cat((self.sim_time_buffer, torch.Tensor([sim_time])))
 
     def saveToFile(self, save_dir):
         """Saves the simulation data to a pickle file."""
