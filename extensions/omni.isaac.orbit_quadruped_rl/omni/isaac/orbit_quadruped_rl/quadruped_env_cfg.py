@@ -37,8 +37,6 @@ class QuadrupedSceneCfg(InteractiveSceneCfg):
 
     # go2 robot
     robot: ArticulationCfg = UNITREE_GO2_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
-    robot.actuators["base_legs"].stiffness = 100.0
-    robot.actuators["base_legs"].damping = 1.0
 
     # sensors
     contact_forces = ContactSensorCfg(

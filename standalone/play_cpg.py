@@ -3,6 +3,7 @@ import argparse
 from omni.isaac.orbit.app import AppLauncher
 
 parser = argparse.ArgumentParser(description="Go2 environment.")
+parser.add_argument("--save_data_dir", type=str, default=None, help="Path to save the simulation data.")
 AppLauncher.add_app_launcher_args(parser)
 args_cli = parser.parse_args()
 
@@ -16,10 +17,13 @@ import carb
 
 from omni.isaac.orbit.sim import SimulationContext, SimulationCfg
 from omni.isaac.orbit.scene import InteractiveScene
+from omni.isaac.orbit.assets import ArticulationCfg
 
 from omni.isaac.orbit_quadruped_rl.quadruped_env_cfg import QuadrupedSceneCfg
 from omni.isaac.orbit_quadruped_cpg.cpg import QuadrupedCPG, GO2_TROT_CFG
 from omni.isaac.orbit_quadruped_cpg.ik import QuadrupedIK, GO2_IK_CFG
+
+from utils.quadruped_simulation_data import QuadrupedSimulationData
 
 
 def run_simulator(sim: SimulationContext, scene: InteractiveScene, cpg: QuadrupedCPG, ik: QuadrupedIK):
@@ -29,7 +33,11 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, cpg: Quadrupe
     sim_time = 0.0
     render_count = 0
 
-    robot = scene["robot"]
+    robot: ArticulationCfg = scene["robot"]
+    robot.actuators["base_legs"].stiffness = 100.0
+    robot.actuators["base_legs"].damping = 1.0
+
+    simulation_data = QuadrupedSimulationData()
 
     with torch.inference_mode():
         while simulation_app.is_running():
@@ -65,6 +73,11 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, cpg: Quadrupe
 
             sim_time += sim_dt
             render_count += 1
+
+            simulation_data.saveStep(robot.data, sim_time=sim_time)
+
+    if args_cli.save_data_dir is not None:
+        simulation_data.saveToFile(args_cli.save_data_dir)
 
 
 def main():

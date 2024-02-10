@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed `GO2_TROT_CPG` parameters.
 
+
 ## [0.2.0] - 2024-01-31
 
 ### Added

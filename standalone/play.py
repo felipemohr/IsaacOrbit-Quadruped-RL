@@ -5,6 +5,7 @@ from omni.isaac.orbit.app import AppLauncher
 parser = argparse.ArgumentParser(description="Go2 environment.")
 parser.add_argument("--num_envs", type=int, default=1, help="Number of environments to spawn.")
 parser.add_argument("--checkpoint", type=str, default=None, help="Path to model checkpoint.")
+parser.add_argument("--save_data_dir", type=str, default=None, help="Path to save the simulation data.")
 AppLauncher.add_app_launcher_args(parser)
 args_cli = parser.parse_args()
 
@@ -23,6 +24,8 @@ from omni.isaac.orbit.scene import InteractiveScene
 from omni.isaac.orbit.managers import SceneEntityCfg
 
 from omni.isaac.orbit_quadruped_rl.quadruped_env_cfg import QuadrupedSceneCfg
+
+from utils.quadruped_simulation_data import QuadrupedSimulationData
 
 
 def load_model(model_path: str) -> nn.Module:
@@ -73,6 +76,8 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
     feet_contact_threshold = 5.0
     feet_sensor_cfg = SceneEntityCfg("contact_forces", body_names=".*_foot")
     feet_sensor_cfg.resolve(scene)
+
+    simulation_data = QuadrupedSimulationData()
 
     with torch.inference_mode():
         while simulation_app.is_running():
@@ -136,6 +141,11 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
 
             sim_time += sim_dt
             render_count += 1
+
+            simulation_data.saveStep(robot.data, sim_time=sim_time)
+
+    if args_cli.save_data_dir is not None:
+        simulation_data.saveToFile(args_cli.save_data_dir)
 
 
 def main():

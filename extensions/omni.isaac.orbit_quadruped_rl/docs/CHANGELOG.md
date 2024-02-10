@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.2.2] - 2024-02-10
+
+### Changed
+
+- Moved `stiffness` and `damping` changes from `quadruped_env_cfg.py` to standalone `play_cpg.py` script. 
+
+
 ## [0.2.1] - 2024-02-10
 
 ### Changed
