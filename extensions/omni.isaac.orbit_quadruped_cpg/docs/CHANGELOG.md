@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2024-02-10
+
+### Added
+
+- Add foot offsets parameters in `QuadrupedIKCfg`.
+- Add `use_foot_frame` parameter in `get_leg_joints` method.
+
+### Fixed
+
+- Fixed `GO2_TROT_CPG` parameters.
+
 ## [0.2.0] - 2024-01-31
 
 ### Added

@@ -33,6 +33,7 @@ class QuadrupedCPGCfg:
     ground_penetration: float = MISSING
     """How far the foot must penetrate on the ground when in stance phase."""
 
+
 ##
 # Coupling matrices
 ##
@@ -64,9 +65,9 @@ gallop_gait_matrix = np.array(
 
 GO2_TROT_CFG = QuadrupedCPGCfg(
     coupling_matrix=trot_gait_matrix,
-    swing_frequency=1.5,
-    stance_frequency=0.5,
+    swing_frequency=2.5,
+    stance_frequency=1.5,
     ground_clearance=0.05,
-    ground_penetration=0.02,
+    ground_penetration=0.005,
 )
 """Configuration for CPG locomotion of Unitree Go2 using trot gait."""

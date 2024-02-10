@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2024-02-10
+
+### Changed
+
+- Changed `stiffness` and `damping` of the robot in `quadruped_env_cfg.py`. 
+
+
 ## [0.2.0] - 2024-01-21
 
 ### Added
@@ -31,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `setup.py` script.
 - Added logs directory with first environment version trained model.
 
-[Unreleased]: https://github.com/felipemohr/IsaacOrbit-Quadruped-RL/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/felipemohr/IsaacOrbit-Quadruped-RL/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/felipemohr/IsaacOrbit-Quadruped-RL/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/felipemohr/IsaacOrbit-Quadruped-RL/releases/tag/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/felipemohr/IsaacOrbit-Quadruped-RL/releases/tag/v0.1.0

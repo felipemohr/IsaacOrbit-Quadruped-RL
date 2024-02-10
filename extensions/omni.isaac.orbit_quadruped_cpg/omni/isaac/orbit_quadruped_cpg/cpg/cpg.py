@@ -10,17 +10,21 @@ class QuadrupedCPG:
         # TODO: include number of environments
         self.cfg = cfg
 
-        self.dstep_x = 0.05 * np.ones(4)
+        self.dstep_x = 0.1 * np.ones(4)
         self.dstep_y = 0.00 * np.ones(4)
 
-        self._frequency_omega = cfg.stance_frequency * np.ones(4)
+        self.reset()
+
+    def reset(self):
+        """Reset the Central Pattern Generator."""
+        self._frequency_omega = self.cfg.stance_frequency * np.ones(4)
         self._ground_multiplier = np.zeros(4)
 
         self._amplitude_r = np.random.rand(4)
         self._amplitude_dr = np.zeros(4)
         self._amplitude_d2r = np.zeros(4)
 
-        self._phase_theta = np.random.rand
+        self._phase_theta = np.random.rand(4)
         self._phase_dtheta = np.zeros(4)
 
     def step(self, dt: float):
@@ -57,4 +61,5 @@ class QuadrupedCPG:
         foot_y = -self.dstep_y * self._amplitude_r * np.cos(self._phase_theta)
         foot_z = self._ground_multiplier * np.sin(self._phase_theta)
 
-        return np.array([foot_x, foot_y, foot_z])
+        return np.array([foot_x, foot_y, foot_z]).transpose()
+    
