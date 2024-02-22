@@ -63,11 +63,12 @@ gallop_gait_matrix = np.array(
 # Configuration
 ##
 
+# v = 1 m/s with dstep_x = 0.10
 GO2_TROT_CFG = QuadrupedCPGCfg(
     coupling_matrix=trot_gait_matrix,
-    swing_frequency=2.5,
-    stance_frequency=1.5,
+    swing_frequency=3.2,
+    stance_frequency=2.3,
     ground_clearance=0.05,
-    ground_penetration=0.005,
+    ground_penetration=0.003,
 )
 """Configuration for CPG locomotion of Unitree Go2 using trot gait."""

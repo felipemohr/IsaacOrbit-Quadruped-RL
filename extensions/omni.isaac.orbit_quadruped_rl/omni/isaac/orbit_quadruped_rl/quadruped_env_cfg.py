@@ -173,7 +173,7 @@ class RewardsCfg:
     )
     rew_feet_air_time = RewTerm(
         func=mdp.feet_air_time,
-        weight=0.2,
+        weight=0.5,
         params={
             "command_name": "base_velocity",
             "sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_foot"),
@@ -185,7 +185,7 @@ class RewardsCfg:
     pen_ang_vel_xy = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
     pen_action_rate = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
     pen_joint_accel = RewTerm(func=mdp.joint_acc_l2, weight=-1.0e-6)
-    pen_joint_powers = RewTerm(func=mdp.joint_powers_l2, weight=-1e-3)
+    pen_joint_powers = RewTerm(func=mdp.joint_powers_l1, weight=-3e-3)
 
 
 @configclass
