@@ -58,3 +58,7 @@ This repository offers environments for training quadruped robots using Reinforc
   $ conda activate orbit
   $ python orbit/source/standalone/workflows/rsl_rl/play.py --task Isaac-Quadruped-Go2-v0 --my_checkpoint IsaacOrbit-Quadruped-RL/logs/rsl_rl/quadruped_go2/env_v2/env_20k/model_19999.pt
   ```
+
+https://github.com/felipemohr/IsaacOrbit-Quadruped-RL/assets/50018670/72cf6558-4fb4-4fa7-babf-4154c043ec0e
+
+
