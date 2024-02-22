@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [0.2.3] - 2024-02-22
+
+### Added
+
+- Added `quadruped_simulation_data.py` utils.
+
+### Fixed
+
+- Fixed `joint_powers_l1` penalization computation.
+
+### Changed
+
+- Changed reward weights. 
+
+
 ## [0.2.2] - 2024-02-10
 
 ### Changed
