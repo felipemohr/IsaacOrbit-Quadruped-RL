@@ -3,7 +3,7 @@ import pickle
 import torch
 from datetime import datetime
 
-# from omni.isaac.orbit.assets import ArticulationData
+from omni.isaac.orbit.assets import ArticulationData
 
 
 class QuadrupedSimulationData:
@@ -19,9 +19,12 @@ class QuadrupedSimulationData:
         self.joint_vel_buffer = torch.empty(0).to(device)
         self.joint_acc_buffer = torch.empty(0).to(device)
         self.joint_torques_buffer = torch.empty(0).to(device)
+        self.feet_contact_buffer = torch.empty(0).to(device)
         self.sim_time_buffer = torch.empty(0)
 
-    def saveStep(self, articulation_data, sim_time: float = 0.0):
+    def saveStep(
+        self, articulation_data: ArticulationData, feet_contact_bools: torch.Tensor | None = None, sim_time: float = 0.0
+    ):
         """Saves the current simulation data in the class attributes."""
 
         self.base_lin_vel_buffer = torch.cat((self.base_lin_vel_buffer, articulation_data.root_lin_vel_b.clone()))
@@ -38,6 +41,9 @@ class QuadrupedSimulationData:
         self.joint_acc_buffer = torch.cat((self.joint_acc_buffer, articulation_data.joint_acc.clone()))
         self.joint_torques_buffer = torch.cat((self.joint_torques_buffer, articulation_data.applied_torque.clone()))
         self.sim_time_buffer = torch.cat((self.sim_time_buffer, torch.Tensor([sim_time])))
+
+        if feet_contact_bools is not None:
+            self.feet_contact_buffer = torch.cat((self.feet_contact_buffer, feet_contact_bools))
 
     def saveToFile(self, save_dir):
         """Saves the simulation data to a pickle file."""

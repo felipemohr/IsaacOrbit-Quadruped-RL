@@ -24,8 +24,7 @@ from omni.isaac.orbit.scene import InteractiveScene
 from omni.isaac.orbit.managers import SceneEntityCfg
 
 from omni.isaac.orbit_quadruped_rl.quadruped_env_cfg import QuadrupedSceneCfg
-
-from utils.quadruped_simulation_data import QuadrupedSimulationData
+from omni.isaac.orbit_quadruped_rl.utils import QuadrupedSimulationData
 
 
 def load_model(model_path: str) -> nn.Module:
@@ -77,11 +76,15 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
     feet_sensor_cfg = SceneEntityCfg("contact_forces", body_names=".*_foot")
     feet_sensor_cfg.resolve(scene)
 
+    kp = 1.0
+    ki = 1.0
+
     with torch.inference_mode():
         while simulation_app.is_running():
             if sim_time >= 30.0 or render_count == 0:
                 if args_cli.save_data_dir is not None and render_count > 0:
                     simulation_data.saveToFile(args_cli.save_data_dir)
+                    print(f"[INFO]: Saving simulation data to {args_cli.save_data_dir}")
                 simulation_data = QuadrupedSimulationData()
 
                 sim_time = 0.0
@@ -95,6 +98,8 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
                 robot.write_joint_state_to_sim(joint_pos, joint_vel)
 
                 action = torch.zeros_like(joint_pos)
+
+                sum_vel_error = torch.zeros((args_cli.num_envs, 3)).to(sim.device)
 
                 scene.reset()
                 print("[INFO]: Resetting robot state...")
@@ -117,6 +122,15 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
             feet_contact = torch.norm(feet_net_forces[:, feet_sensor_cfg.body_ids], dim=-1) > feet_contact_threshold
 
             last_action = action
+
+            base_vel = base_lin_vel
+            base_vel[:, 2] = base_ang_vel[:, 2]
+            vel_error = vel_command - base_vel
+            sum_vel_error += vel_error * sim_dt
+            sum_vel_error = torch.clamp(sum_vel_error, min=-3.0 / ki, max=3.0 / ki)
+
+            vel_command = kp * vel_error + ki * sum_vel_error
+            vel_command = torch.clamp(vel_command, min=-3.0, max=3.0)
 
             observations = torch.cat(
                 (
@@ -145,7 +159,7 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, policy: nn.Mo
             sim_time += sim_dt
             render_count += 1
 
-            simulation_data.saveStep(robot.data, sim_time=sim_time)
+            simulation_data.saveStep(robot.data, feet_contact_bools=feet_contact, sim_time=sim_time)
 
 
 def main():

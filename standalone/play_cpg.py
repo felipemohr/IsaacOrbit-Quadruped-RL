@@ -18,12 +18,13 @@ import carb
 from omni.isaac.orbit.sim import SimulationContext, SimulationCfg
 from omni.isaac.orbit.scene import InteractiveScene
 from omni.isaac.orbit.assets import ArticulationCfg
+from omni.isaac.orbit.managers import SceneEntityCfg
 
 from omni.isaac.orbit_quadruped_rl.quadruped_env_cfg import QuadrupedSceneCfg
 from omni.isaac.orbit_quadruped_cpg.cpg import QuadrupedCPG, GO2_TROT_CFG
 from omni.isaac.orbit_quadruped_cpg.ik import QuadrupedIK, GO2_IK_CFG
 
-from utils.quadruped_simulation_data import QuadrupedSimulationData
+from omni.isaac.orbit_quadruped_rl.utils import QuadrupedSimulationData
 
 
 def run_simulator(sim: SimulationContext, scene: InteractiveScene, cpg: QuadrupedCPG, ik: QuadrupedIK):
@@ -36,6 +37,10 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, cpg: Quadrupe
     robot: ArticulationCfg = scene["robot"]
     robot.actuators["base_legs"].stiffness = 100.0
     robot.actuators["base_legs"].damping = 1.0
+
+    feet_contact_threshold = 5.0
+    feet_sensor_cfg = SceneEntityCfg("contact_forces", body_names=".*_foot")
+    feet_sensor_cfg.resolve(scene)
 
     with torch.inference_mode():
         while simulation_app.is_running():
@@ -64,6 +69,9 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, cpg: Quadrupe
                 leg_joints = ik.get_all_leg_joints(feet_point[0], feet_point[1], feet_point[2], feet_point[3])
                 action = torch.tensor(leg_joints)
 
+            feet_net_forces = scene.sensors[feet_sensor_cfg.name].data.net_forces_w
+            feet_contact = torch.norm(feet_net_forces[:, feet_sensor_cfg.body_ids], dim=-1) > feet_contact_threshold
+
             robot.set_joint_position_target(action)
             scene.write_data_to_sim()
             if render_count % 8 == 0:
@@ -75,7 +83,7 @@ def run_simulator(sim: SimulationContext, scene: InteractiveScene, cpg: Quadrupe
             sim_time += sim_dt
             render_count += 1
 
-            simulation_data.saveStep(robot.data, sim_time=sim_time)
+            simulation_data.saveStep(robot.data, feet_contact_bools=feet_contact, sim_time=sim_time)
 
 
 def main():
