@@ -1,7 +1,8 @@
+import os
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
+from matplotlib.ticker import MaxNLocator
 
 parser = argparse.ArgumentParser(description="Go2 environment.")
 parser.add_argument("--csv_files_path", type=str, default=None, help="Path containing csv files.")
@@ -28,14 +29,17 @@ for file in files:
     plt.clf()
     plt.close("all")
     plt.figure(figsize=(8, 4))
-    plt.title(file.split(".")[0], fontsize=16)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
+    plt.title(file.split(".")[0], fontsize=28)
+    plt.xticks(fontsize=24)
+    plt.yticks(fontsize=24)
     plt.ylim(ylim_min, ylim_max)
-    plt.plot(df["Step"], df_avg, linewidth=2.5)
-    plt.plot(df["Step"], df["Value"], alpha=0.3, linewidth=2.0)
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(MaxNLocator(nbins=6))
+    ax.yaxis.set_major_locator(MaxNLocator(nbins=6))
+    plt.plot(df["Step"], df_avg, linewidth=5.0, color="#000000")
+    plt.plot(df["Step"], df["Value"], alpha=0.3, linewidth=3.0, color="#E41A1C")
     plt.grid(True, which="both", linestyle="--", linewidth=1.0)
-
+    
     if args_cli.output_plots_path:
         save_plot_path = os.path.join(args_cli.output_plots_path, file.replace(".csv", ".png"))
         plt.savefig(save_plot_path, bbox_inches="tight", dpi=300)

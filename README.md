@@ -1,9 +1,11 @@
 # IsaacOrbit-Quadruped-RL
 
-This repository offers environments for training quadruped robots using Reinforcement Learning in Isaac Orbit.
+This repository offers environments for training quadruped robots using Reinforcement Learning in Isaac Orbit. The training framework is presented in the image below.
+
+![Training Diagram](paper/TrainingDiagram.drawio.png)
 
 ## Installation
-1. Begin by installing NVIDIA's [Isaac Sim](https://docs.omniverse.nvidia.com/isaacsim/latest/index.html) and [Isaac Orbit](https://isaac-orbit.github.io/orbit/).
+1. Begin by installing NVIDIA's [Isaac Sim](https://docs.omniverse.nvidia.com/isaacsim/latest/index.html) and [Isaac Orbit](https://isaac-sim.github.io/IsaacLab/) v0.2.
 2. This repository includes two Isaac Orbit extensions. To install them, follow these steps:
    ```bash
    $ git clone git@github.com:felipemohr/IsaacOrbit-Quadruped-RL.git
